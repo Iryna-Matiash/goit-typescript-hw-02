@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import SearchBar from '../SearchBar/SearchBar';
 import ImageGallery from '../ImageGallery/ImageGallery';
@@ -8,15 +7,16 @@ import ErrorMessage from '../ErrorMessage/ErrorMessage';
 import LoadMoreBtn from '../LoadMoreBtn/LoadMoreBtn';
 import { fetchImages } from '../../services/unsplashAPI';
 import { Toaster } from 'react-hot-toast';
+import type { Image } from '../../types';
 
-const App = () => {
-  const [query, setQuery] = useState('');
-  const [images, setImages] = useState([]);
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [totalPages, setTotalPages] = useState(0);
+const App: React.FC = () => {
+  const [query, setQuery] = useState<string>('');
+  const [images, setImages] = useState<Image[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<Image | null>(null);
+  const [totalPages, setTotalPages] = useState<number>(0);
 
   useEffect(() => {
     if (!query) return;
@@ -38,7 +38,7 @@ const App = () => {
     getImages();
   }, [query, page]);
 
-  const handleSearch = (newQuery) => {
+  const handleSearch = (newQuery: string) => {
     if (newQuery === query) return;
     setQuery(newQuery);
     setPage(1);
@@ -49,7 +49,7 @@ const App = () => {
     setPage((prev) => prev + 1);
   };
 
-  const handleImageClick = (image) => {
+  const handleImageClick = (image: Image) => {
     setSelectedImage(image);
   };
 
@@ -64,7 +64,13 @@ const App = () => {
       {images.length > 0 && <ImageGallery images={images} onImageClick={handleImageClick} />}
       {loading && <Loader />}
       {images.length > 0 && page < totalPages && !loading && <LoadMoreBtn onClick={loadMore} />}
-      {selectedImage && <ImageModal isOpen={!!selectedImage} onRequestClose={closeModal} image={selectedImage} />}
+      {selectedImage && (
+        <ImageModal
+          isOpen={!!selectedImage}
+          onRequestClose={closeModal}
+          image={selectedImage}
+        />
+      )}
       <Toaster position="top-right" reverseOrder={false} />
     </div>
   );
